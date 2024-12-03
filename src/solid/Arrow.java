@@ -1,5 +1,6 @@
 package solid;
 
+import transforms.Col;
 import transforms.Point3D;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class Arrow extends Solid{
                 3,4,
                 4,1
         );
+
+        setColor(new Col(0xff0000));
 
     }
 }

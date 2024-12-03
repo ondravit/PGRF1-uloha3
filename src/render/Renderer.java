@@ -6,6 +6,7 @@ import solid.Solid;
 import transforms.Point3D;
 import transforms.Vec3D;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Renderer {
@@ -20,7 +21,16 @@ public class Renderer {
     }
 
     public void renderSolid(Solid solid) {
+        // TODO:
+        // Projít všechny vrcholy, pronásobit je modelovací maticí a uložit do nového seznamu, ze kterého
+        // je pak bude další metoda brát
+        List<Point3D> vertices = new ArrayList<>();
+        for (int i = 0; i < solid.getVb().size(); i++) {
+            vertices.add(solid.getVb().get(i).mul(solid.getModel()));
+        }
 
+
+        // Prochazeni IB
         for (int i = 0; i < solid.getIb().size(); i += 2) {
             int indexP1 = solid.getIb().get(i);
             int indexP2 = solid.getIb().get(i + 1);
@@ -28,6 +38,11 @@ public class Renderer {
             Point3D p1 = solid.getVb().get(indexP1);
             Point3D p2 = solid.getVb().get(indexP2);
 
+            // Násobení vrcholů modelovací maticí
+            p1 = p1.mul(solid.getModel());
+            p2 = p2.mul(solid.getModel());
+
+            // Transformace do okna obrazovky
             Vec3D p1atScreen = transformToScreen(new Vec3D(p1));
             Vec3D p2atScreen = transformToScreen(new Vec3D(p2));
 
@@ -38,6 +53,7 @@ public class Renderer {
                     (int) Math.round(p2atScreen.getY())
             );
 
+            lineRasterizer.setColor(solid.getColor().getRGB());
             lineRasterizer.drawLine(line);
         }
     }
