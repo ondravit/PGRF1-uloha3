@@ -3,6 +3,7 @@ package render;
 import model.Line;
 import rasterize.LineRasterizer;
 import solid.Solid;
+import transforms.Mat4;
 import transforms.Point3D;
 import transforms.Vec3D;
 
@@ -13,6 +14,13 @@ public class Renderer {
 
     private LineRasterizer lineRasterizer;
     private int width, height;
+    private Mat4 view;
+    private Mat4 mvp;
+
+
+
+    private Mat4 proj;
+
 
     public Renderer(LineRasterizer lineRasterizer, int width, int height) {
         this.lineRasterizer = lineRasterizer;
@@ -21,7 +29,6 @@ public class Renderer {
     }
 
     public void renderSolid(Solid solid) {
-        // TODO:
         // Projít všechny vrcholy, pronásobit je modelovací maticí a uložit do nového seznamu, ze kterého
         // je pak bude další metoda brát
         List<Point3D> vertices = new ArrayList<>();
@@ -29,6 +36,10 @@ public class Renderer {
             vertices.add(solid.getVb().get(i).mul(solid.getModel()));
         }
 
+        // TODO: pronasobit vsechny MVP matice zde
+        // potom body uvnitř for cyklu násobit pouze touto maticí
+        //mvp = new Mat4();
+        //mvp = mvp.mul(solid.getModel().mul(view).mul(proj));
 
         // Prochazeni IB
         for (int i = 0; i < solid.getIb().size(); i += 2) {
@@ -38,9 +49,17 @@ public class Renderer {
             Point3D p1 = solid.getVb().get(indexP1);
             Point3D p2 = solid.getVb().get(indexP2);
 
-            // Násobení vrcholů modelovací maticí
-            p1 = p1.mul(solid.getModel());
-            p2 = p2.mul(solid.getModel());
+            // Násobení vrcholů modelovací, pohledovou a projekční maticí
+            p1 = p1.mul(solid.getModel()).mul(view).mul(proj);
+            p2 = p2.mul(solid.getModel()).mul(view).mul(proj);
+
+            // Dehomogenizace
+
+            p1 = p1.mul(1/p1.getW());
+
+            p2 = p2.mul(1/p2.getW());
+
+
 
             // Transformace do okna obrazovky
             Vec3D p1atScreen = transformToScreen(new Vec3D(p1));
@@ -66,6 +85,14 @@ public class Renderer {
 
     public void setLineRasterizer(LineRasterizer lineRasterizer) {
         this.lineRasterizer = lineRasterizer;
+    }
+
+    public void setView(Mat4 view) {
+        this.view = view;
+    }
+
+    public void setProj(Mat4 proj) {
+        this.proj = proj;
     }
 
     private Vec3D transformToScreen(Vec3D point) {
