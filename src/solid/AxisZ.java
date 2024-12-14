@@ -11,6 +11,7 @@ public class AxisZ extends Solid{
 
         addIndices(0,1);
 
-        setColor(new Col(0x0000ff));
+        setOriginalColor(new Col(0x0000ff));
+        setColor(getOriginalColor());
     }
 }

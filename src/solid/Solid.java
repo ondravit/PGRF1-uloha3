@@ -13,7 +13,16 @@ public abstract class Solid {
     protected List<Point3D> vb = new ArrayList<>();
     protected List<Integer> ib = new ArrayList<>();
     protected Mat4 model = new Mat4Identity();
+    protected Col originalColor = new Col(0xffffff);
     protected Col color = new Col(0xffffff);
+
+    public Col getOriginalColor() {
+        return originalColor;
+    }
+
+    public void setOriginalColor(Col originalColor) {
+        this.originalColor = originalColor;
+    }
 
     protected void addIndices(Integer...indices) {
         ib.addAll(Arrays.asList(indices));
@@ -46,4 +55,6 @@ public abstract class Solid {
     public void setColor(Col color) {
         this.color = color;
     }
+
+    public void setCubic(){}
 }

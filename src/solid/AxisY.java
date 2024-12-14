@@ -11,6 +11,7 @@ public class AxisY extends Solid{
 
         addIndices(0,1);
 
-        setColor(new Col(0x00ff00));
+        setOriginalColor(new Col(0x00ff00));
+        setColor(getOriginalColor());
     }
 }

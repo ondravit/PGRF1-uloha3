@@ -11,6 +11,7 @@ public class AxisX extends Solid{
 
         addIndices(0,1);
 
-        setColor(new Col(0xff0000));
+        setOriginalColor(new Col(0xff0000));
+        setColor(getOriginalColor());
     }
 }

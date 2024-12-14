@@ -36,10 +36,8 @@ public class Renderer {
             vertices.add(solid.getVb().get(i).mul(solid.getModel()));
         }
 
-        // TODO: pronasobit vsechny MVP matice zde
-        // potom body uvnitř for cyklu násobit pouze touto maticí
-        //mvp = new Mat4();
-        //mvp = mvp.mul(solid.getModel().mul(view).mul(proj));
+        // MVP matice - modelovací, pohledová a projekční
+        mvp = solid.getModel().mul(view).mul(proj);
 
         // Prochazeni IB
         for (int i = 0; i < solid.getIb().size(); i += 2) {
@@ -49,16 +47,18 @@ public class Renderer {
             Point3D p1 = solid.getVb().get(indexP1);
             Point3D p2 = solid.getVb().get(indexP2);
 
-            // Násobení vrcholů modelovací, pohledovou a projekční maticí
-            p1 = p1.mul(solid.getModel()).mul(view).mul(proj);
-            p2 = p2.mul(solid.getModel()).mul(view).mul(proj);
+            // Násobení vrcholů MVP maticí
+            p1 = p1.mul(mvp);
+            p2 = p2.mul(mvp);
+
+            // Ořezání
+            if (!isInView(p1) || !isInView(p2)) {
+                continue;
+            }
 
             // Dehomogenizace
-
-            p1 = p1.mul(1/p1.getW());
-
-            p2 = p2.mul(1/p2.getW());
-
+            if (p1.getW() != 0) p1 = p1.mul(1 / p1.getW());
+            if (p2.getW() != 0) p2 = p2.mul(1 / p2.getW());
 
 
             // Transformace do okna obrazovky
@@ -99,5 +99,11 @@ public class Renderer {
         return point.mul(new Vec3D(1,-1,1))
                 .add(new Vec3D(1,1,0))
                 .mul(new Vec3D((width - 1) / 2., (height - 1) / 2., 1));
+    }
+
+    private boolean isInView(Point3D p) {
+        return p.getX() >= -p.getW() && p.getX() <= p.getW() &&
+                p.getY() >= -p.getW() && p.getY() <= p.getW() &&
+                p.getZ() >= -p.getW() && p.getZ() <= p.getW();
     }
 }

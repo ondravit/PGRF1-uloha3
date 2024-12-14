@@ -23,7 +23,8 @@ public class Pyramid extends Solid{
                 4,3
         );
 
-        setColor(new Col(0xffff00));
+        setOriginalColor(new Col(0xffff00));
+        setColor(getOriginalColor());
 
 
     }

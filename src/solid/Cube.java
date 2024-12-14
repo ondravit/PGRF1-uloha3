@@ -34,7 +34,8 @@ public class Cube extends Solid{
 
         );
 
-        setColor(new Col(0xFFA500));
+        setOriginalColor(new Col(0xFFA500));
+        setColor(getOriginalColor());
 
 
     }
